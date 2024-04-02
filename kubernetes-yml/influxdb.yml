@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: influxdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: influxdb
+  template:
+    metadata:
+      labels:
+        app: influxdb
+    spec:
+      containers:
+      - name: influxdb
+        image: influxdb:1.8
+        ports:
+        - containerPort: 8086
+          hostPort: 8086
+        env:
+          - name: INFLUXDB_DB
+            value: teste
+          - name: INFLUXDB_ADMIN_USER
+            value: teste
+          - name: INFLUXDB_ADMIN_PASSWORD
+            value: teste
+---
+apiVersion: v1
+kind: Service
+metadata:
+  # Replace with a meaningful name
+  name: influxdb
+spec:
+  selector:
+    # Replace with labels matching your pods
+    app: influxdb
+  ports:
+  - protocol: TCP
+    port: 8086  # Replace with the port your application listens on
+    targetPort: 8086  # Replace if your application listens on a different port inside the pod
+  type: ClusterIP  # Adjust the service type as needed (more on service types below)

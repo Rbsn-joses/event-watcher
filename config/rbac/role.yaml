@@ -7,6 +7,84 @@ rules:
 - apiGroups:
   - my.domain
   resources:
+  - Configmapwatchers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - my.domain
+  resources:
+  - Configmapwatchers/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - my.domain
+  resources:
+  - Configmapwatchers/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - my.domain
+  resources:
+  - Ingresswatchers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - my.domain
+  resources:
+  - Ingresswatchers/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - my.domain
+  resources:
+  - Ingresswatchers/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - my.domain
+  resources:
+  - Secretwatchers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - my.domain
+  resources:
+  - Secretwatchers/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - my.domain
+  resources:
+  - Secretwatchers/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - my.domain
+  resources:
   - Servicewatchers
   verbs:
   - create

@@ -22,8 +22,9 @@ import (
 	"fmt"
 
 	"github.com/rbsn-joses/event-watcher/influx_metrics"
-	v1 "k8s.io/api/core/v1"
+	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
@@ -32,52 +33,60 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 )
 
-// PodWatcherReconciler reconciles a PodWatcher object
-type PodWatcherReconciler struct {
+// ServiceWatcherReconciler reconciles a ServiceWatcher object
+type ServiceWatcherReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
 }
 
-//+kubebuilder:rbac:groups=my.domain,resources=podwatchers,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=my.domain,resources=podwatchers/status,verbs=get;update;patch
-//+kubebuilder:rbac:groups=my.domain,resources=podwatchers/finalizers,verbs=update
+//+kubebuilder:rbac:groups=my.domain,resources=Servicewatchers,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=my.domain,resources=Servicewatchers/status,verbs=get;update;patch
+//+kubebuilder:rbac:groups=my.domain,resources=Servicewatchers/finalizers,verbs=update
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
 // TODO(user): Modify the Reconcile function to compare the state specified by
-// the PodWatcher object against the actual cluster state, and then
+// the ServiceWatcher object against the actual cluster state, and then
 // perform operations to make the cluster state reflect the state specified by
 // the user.
 //
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.16.3/pkg/reconcile
-func (r *PodWatcherReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+func (r *ServiceWatcherReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	logger := log.FromContext(ctx)
-	logger.Info(fmt.Sprintf("Created pod %v", req.NamespacedName))
+	logger.Info(fmt.Sprintf("Created Service %v", req.NamespacedName))
 	return ctrl.Result{}, nil
 }
 
 // SetupWithManager sets up the controller with the Manager.
-func (r *PodWatcherReconciler) SetupWithManager(mgr ctrl.Manager) error {
+func (r *ServiceWatcherReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&v1.Pod{}).
+		For(&corev1.Service{}).
 		WithEventFilter(predicate.Funcs{
 			CreateFunc: func(e event.CreateEvent) bool {
-				influx_metrics.CreateMetrics(e.Object.GetName(), e.Object.GetNamespace(), "CREATE", "pod", 1)
+				err := influx_metrics.CreateMetrics(e.Object.GetName(), e.Object.GetNamespace(), "CREATE", "service", 1)
+				if err != nil {
+					fmt.Println(err)
+				}
 				return true
 			},
 			UpdateFunc: func(e event.UpdateEvent) bool {
 				// Ignore updates to CR status in which case metadata.Generation does not change
-				influx_metrics.CreateMetrics(e.ObjectNew.GetName(), e.ObjectNew.GetNamespace(), "UPDATE", "pod", 2)
-
+				err := influx_metrics.CreateMetrics(e.ObjectNew.GetName(), e.ObjectNew.GetNamespace(), "UPDATE", "service", 2)
+				if err != nil {
+					fmt.Println(err)
+				}
 				return e.ObjectOld.GetResourceVersion() != e.ObjectNew.GetResourceVersion()
 			},
 			DeleteFunc: func(e event.DeleteEvent) bool {
 				// Evaluates to false if the object has been confirmed deleted.
-				influx_metrics.CreateMetrics(e.Object.GetName(), e.Object.GetNamespace(), "DELETE", "pod", 3)
-
+				err := influx_metrics.CreateMetrics(e.Object.GetName(), e.Object.GetNamespace(), "DELETE", "service", 3)
+				if err != nil {
+					fmt.Println(err)
+				}
 				return !e.DeleteStateUnknown
 			},
-		}).Complete(r)
+		}).
+		Complete(r)
 
 }

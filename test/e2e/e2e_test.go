@@ -24,7 +24,7 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"github.com/rbsn-joses/pod-watcher/test/utils"
+	"github.com/rbsn-joses/event-watcher/test/utils"
 )
 
 const namespace = "event-watcher-system"

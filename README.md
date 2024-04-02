@@ -90,7 +90,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 minikube start --driver=docker
-operator-sdk init --repo github.com/rbsn-joses/pod-watcher
+operator-sdk init --repo github.com/rbsn-joses/event-watcher
 operator-sdk create api --version=v1alpha1 --kind=PodWatcher --controller --resource=false
 make run
-kubectl run nginx -n kube-system nginx-test-watch
+kubectl run nginx  nginx-test-watch

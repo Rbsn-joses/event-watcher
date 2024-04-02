@@ -33,7 +33,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
-	"github.com/rbsn-joses/pod-watcher/internal/controller"
+	"github.com/rbsn-joses/event-watcher/internal/controller"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -122,13 +122,32 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "PodWatcher")
 		os.Exit(1)
 	}
-
 	if err = (&controller.ServiceWatcherReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "ServiceWatcher")
 		os.Exit(1)
+	}
+	if err = (&controller.IngressWatcherReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "ServiceWatcher")
+		os.Exit(1)
+	}
+	if err = (&controller.ConfigmapWatcherReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "ServiceWatcher")
+		os.Exit(1)
+	}
+	if err = (&controller.SecretWatcherReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "SecretWatcher")
 	}
 
 	//+kubebuilder:scaffold:builder

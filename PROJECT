@@ -9,7 +9,7 @@ plugins:
   manifests.sdk.operatorframework.io/v2: {}
   scorecard.sdk.operatorframework.io/v2: {}
 projectName: event-watcher
-repo: github.com/rbsn-joses/pod-watcher
+repo: github.com/rbsn-joses/event-watcher
 resources:
 - controller: true
   domain: my.domain

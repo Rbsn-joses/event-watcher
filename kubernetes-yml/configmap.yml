@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: meu-configmap
+data:
+  chave1: valor1
+  chave2: valor2
